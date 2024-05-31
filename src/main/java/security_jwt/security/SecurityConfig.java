@@ -13,6 +13,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
@@ -45,9 +47,9 @@ public class SecurityConfig {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        UserDetails user1 = User.withUsername("user1").password("{noop}user1").roles("USER").build();
+        UserDetails user1 = User.withUsername("user1").password(passwordEncoder().encode("user1")).roles("USER").build();
 
-        UserDetails admin = User.withUsername("admin").password("{noop}admin").roles("ADMIN").build();
+        UserDetails admin = User.withUsername("admin").password(passwordEncoder().encode("admin")).roles("ADMIN").build();
 
 
         JdbcUserDetailsManager userDetailsManager = new JdbcUserDetailsManager(dataSource);
@@ -55,5 +57,9 @@ public class SecurityConfig {
         userDetailsManager.createUser(admin);
         return userDetailsManager;
         //return new InMemoryUserDetailsManager(user1, admin);
+    }
+    @Bean
+    public PasswordEncoder   passwordEncoder(){
+        return new BCryptPasswordEncoder();
     }
 }
