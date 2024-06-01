@@ -44,15 +44,23 @@ public class SecurityConfig {
 
     @Bean
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(authorizeRequests -> authorizeRequests.requestMatchers("/h2-console/**").permitAll().requestMatchers("/signin").permitAll().anyRequest().authenticated());
-        http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-        http.exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler));
+        http.authorizeHttpRequests(authorizeRequests -> authorizeRequests
+                .requestMatchers("/h2-console/**")
+                .permitAll()
+                .requestMatchers("/signin")
+                .permitAll()
+                .anyRequest()
+                .authenticated());
+        http.sessionManagement(session -> session
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+        http.exceptionHandling(exception -> exception
+                .authenticationEntryPoint(unauthorizedHandler));
         //http.httpBasic(withDefaults());
-        http.headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin));
+        http.headers(headers -> headers
+                .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin));
         http.csrf(AbstractHttpConfigurer::disable);
-        http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
-
-
+        http.addFilterBefore(authenticationJwtTokenFilter(),
+                UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
@@ -65,10 +73,14 @@ public class SecurityConfig {
     public CommandLineRunner initData(UserDetailsService userDetailsService) {
         return args -> {
             JdbcUserDetailsManager manager = (JdbcUserDetailsManager) userDetailsService;
-            UserDetails user1 = User.withUsername("user1").password(passwordEncoder().encode("password1")).roles("USER").build();
+            UserDetails user1 = User
+                    .withUsername("user1")
+                    .password(passwordEncoder().encode("user1"))
+                    .roles("USER").build();
             UserDetails admin = User.withUsername("admin")
                     //.password(passwordEncoder().encode("adminPass"))
-                    .password(passwordEncoder().encode("adminPass")).roles("ADMIN").build();
+                    .password(passwordEncoder().encode("admin"))
+                    .roles("ADMIN").build();
 
             JdbcUserDetailsManager userDetailsManager = new JdbcUserDetailsManager(dataSource);
             userDetailsManager.createUser(user1);
